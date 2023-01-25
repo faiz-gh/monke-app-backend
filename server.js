@@ -1,8 +1,8 @@
 const express = require('express'); // Express web server framework
-const aws = require('aws-sdk'); // AWS SDK
-const bodyParser = require('body-parser'); // for parsing JSON
+const AWS = require('aws-sdk'); // AWS SDK
+const BodyParser = require('body-parser'); // for parsing JSON
 const uuid = require('uuid'); // for generating unique file names
-const fs = require('fs'); // for reading files
+const dotenv = require('dotenv'); // for loading environment variables
 
 const app = express(); // create express app
 
@@ -18,3 +18,71 @@ app.use(BodyParser.urlencoded({
 const PORT = process.env.PORT || 3000; // port to listen on
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`)); // start server
 
+dotenv.config(); // load environment variables
+
+// configure AWS SDK
+AWS.config.update({
+    region: process.env.AWS_REGION, // region of your bucket
+}); // update AWS config
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // access key
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // secret access key
+    region: process.env.AWS_REGION, // region of your bucket
+    signatureVersion: 'v4', // signature version
+}); // create S3 instance
+
+const textract = new AWS.Textract({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID, // access key
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, // secret access key
+    region: process.env.AWS_REGION, // region of your bucket
+    signatureVersion: 'v4', // signature version
+}); // create Textract instance
+
+const uploadAndAnalyse = async (req, res) => {
+    try {
+        const fileName = `${uuid.v4()}.jpg`; // generate unique file name
+        const image = Buffer.from(req.body.photo, 'base64'); // convert base64 to buffer
+        const params = {
+            Bucket: process.env.AWS_BUCKET_NAME, // bucket name
+            Key: fileName, // file name
+            Body: image, // file content
+            ContentEncoding: 'base64', // content encoding
+            ContentType: 'image/jpg', // content type
+        }; // params for S3 upload
+
+        s3.upload(params, async (err, data) => {
+            if (err) {
+                console.error("Error uploading to S3: ", err); // log error
+            }
+        }); // upload to S3
+
+        s3.getObject(params, (err, data) => {
+            if (err) {
+                console.error("Error getting object from S3: ", err); // log error
+            } else {
+                const textractParams = {
+                    Document: {
+                        Bytes: data.Body, // S3 object content
+                    }
+                }; // params for Textract
+
+                textract.analyzeExpense(textractParams, (err, data) => {
+                    if (err) {
+                        console.error("Error analysing expense: ", err); // log error
+                    } else {
+                        console.log(data); // log result
+                        res.status(200).json(data); // send result to client
+                    }
+                }); // analyse expense
+            }
+        }); // get object from S3
+    } catch (error) {
+        console.error("Error connecting to S3: ", error); // log error
+        throw error;
+    }
+} // uploadAndAnalyse
+
+app.post('/uploadAndAnalyse', (req, res) => {
+    return uploadAndAnalyse(req, res);
+}); // POST /uploadAndAnalyse
