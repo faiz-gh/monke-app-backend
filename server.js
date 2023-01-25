@@ -86,3 +86,5 @@ const uploadAndAnalyse = async (req, res) => {
 app.post('/uploadAndAnalyse', (req, res) => {
     return uploadAndAnalyse(req, res);
 }); // POST /uploadAndAnalyse
+
+// pm2 --name monke start npm -- start
