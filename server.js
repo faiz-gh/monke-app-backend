@@ -43,21 +43,26 @@ const uploadAndAnalyse = async (req, res) => {
     try {
         const fileName = `${uuid.v4()}.jpg`; // generate unique file name
         const image = Buffer.from(req.body.photo, 'base64'); // convert base64 to buffer
-        const params = {
-            Bucket: process.env.AWS_BUCKET_NAME, // bucket name
+        const s3Params = {
+            Bucket: process.env.S3_BUCKET_NAME, // bucket name
             Key: fileName, // file name
             Body: image, // file content
             ContentEncoding: 'base64', // content encoding
             ContentType: 'image/jpg', // content type
         }; // params for S3 upload
 
-        s3.upload(params, async (err, data) => {
+        s3.upload(s3Params, async (err, data) => {
             if (err) {
                 console.error("Error uploading to S3: ", err); // log error
             }
         }); // upload to S3
 
-        s3.getObject(params, (err, data) => {
+        const s3ObjectParams = {
+            Bucket: process.env.S3_BUCKET_NAME, // bucket name
+            Key: fileName, // file name
+        }; // params for S3 object
+
+        s3.getObject(s3ObjectParams, (err, data) => {
             if (err) {
                 console.error("Error getting object from S3: ", err); // log error
             } else {
