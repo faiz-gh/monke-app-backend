@@ -1,5 +1,7 @@
 const express = require('express'); // Express web server framework
+const fs = require('fs'); // file system
 const AWS = require('aws-sdk'); // AWS SDK
+const admin = require('firebase-admin'); // Firebase Admin SDK
 const BodyParser = require('body-parser'); // for parsing JSON
 const uuid = require('uuid'); // for generating unique file names
 const dotenv = require('dotenv'); // for loading environment variables
@@ -76,6 +78,13 @@ const uploadAndAnalyse = async (req, res) => {
                             } else {
                                 console.log(data); // log result
                                 res.status(200).json(data); // send result to client
+                                fs.writeFile('data.json', JSON.stringify(data), (err) => {
+                                    if (err) {
+                                        console.error("Error writing to file: ", err); // log error
+                                    } else {
+                                        console.log("Successfully wrote to file"); // log success
+                                    }
+                                }); // write to file
                             }
                         }); // analyse expense
                     }
