@@ -54,34 +54,35 @@ const uploadAndAnalyse = async (req, res) => {
         s3.upload(s3Params, async (err, data) => {
             if (err) {
                 console.error("Error uploading to S3: ", err); // log error
+            } else {
+                const s3ObjectParams = {
+                    Bucket: process.env.S3_BUCKET_NAME, // bucket name
+                    Key: fileName, // file name
+                }; // params for S3 object
+        
+                s3.getObject(s3ObjectParams, (err, data) => {
+                    if (err) {
+                        console.error("Error getting object from S3: ", err); // log error
+                    } else {
+                        const textractParams = {
+                            Document: {
+                                Bytes: data.Body, // S3 object content
+                            }
+                        }; // params for Textract
+        
+                        textract.analyzeExpense(textractParams, (err, data) => {
+                            if (err) {
+                                console.error("Error analysing expense: ", err); // log error
+                            } else {
+                                console.log(data); // log result
+                                res.status(200).json(data); // send result to client
+                            }
+                        }); // analyse expense
+                    }
+                }); // get object from S3
             }
         }); // upload to S3
 
-        const s3ObjectParams = {
-            Bucket: process.env.S3_BUCKET_NAME, // bucket name
-            Key: fileName, // file name
-        }; // params for S3 object
-
-        s3.getObject(s3ObjectParams, (err, data) => {
-            if (err) {
-                console.error("Error getting object from S3: ", err); // log error
-            } else {
-                const textractParams = {
-                    Document: {
-                        Bytes: data.Body, // S3 object content
-                    }
-                }; // params for Textract
-
-                textract.analyzeExpense(textractParams, (err, data) => {
-                    if (err) {
-                        console.error("Error analysing expense: ", err); // log error
-                    } else {
-                        console.log(data); // log result
-                        res.status(200).json(data); // send result to client
-                    }
-                }); // analyse expense
-            }
-        }); // get object from S3
     } catch (error) {
         console.error("Error connecting to S3: ", error); // log error
         throw error;
