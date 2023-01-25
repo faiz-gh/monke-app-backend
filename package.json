@@ -1,0 +1,11 @@
+{
+  "name": "monke-backend",
+  "version": "1.0.0",
+  "description": "Monke App Backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "author": "Faiz",
+  "license": "ISC"
+}
