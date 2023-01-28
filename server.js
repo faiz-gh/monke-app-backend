@@ -77,7 +77,7 @@ const uploadAndAnalyse = async (req, res) => {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
                                 var summaryFields = [];
-                                var summaryField = data.ExpenseDocuments.SummaryFields.forEach((summaryField) => {
+                                var summaryField = data.ExpenseDocuments[0].SummaryFields.forEach((summaryField) => {
                                     var keyMap = {};
                                     keyMap["type"] = summaryField.Type.Text; // type of field
                                     keyMap["value"] = summaryField.ValueDetection.Text; // value of field
