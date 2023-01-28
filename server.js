@@ -76,15 +76,17 @@ const uploadAndAnalyse = async (req, res) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                console.log(data); // log result
+                                var summaryFields = [];
+                                var summaryField = data.ExpenseDocuments.SummaryFields.forEach((summaryField) => {
+                                    var keyMap = {};
+                                    keyMap["type"] = summaryField.Type.Text; // type of field
+                                    keyMap["value"] = summaryField.ValueDetection.Text; // value of field
+                                    keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
+                                    return keyMap;
+                                });
+                                summaryFields.push(summaryField);
+                                console.log(summaryFields);
                                 res.status(200).json(data); // send result to client
-                                fs.writeFile('data.json', JSON.stringify(data), (err) => {
-                                    if (err) {
-                                        console.error("Error writing to file: ", err); // log error
-                                    } else {
-                                        console.log("Successfully wrote to file"); // log success
-                                    }
-                                }); // write to file
                             }
                         }); // analyse expense
                     }
