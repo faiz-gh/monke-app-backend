@@ -72,11 +72,11 @@ const uploadAndAnalyse = async (req, res) => {
                             }
                         }; // params for Textract
         
-                        textract.analyzeExpense(textractParams, (err, data) => {
+                        textract.analyzeExpense(textractParams, (err, jdata) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                const jdata = JSON.parse(data);
+                                // const jdata = JSON.parse(data);
                                 var summaryFields = [];
                                 var summaryField = jdata.ExpenseDocuments[0].SummaryFields.forEach((summaryField) => {
                                     var keyMap = {};
