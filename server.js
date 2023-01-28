@@ -83,7 +83,7 @@ const uploadAndAnalyse = async (req, res) => {
                                         var keyMap = {};
                                         keyMap["type"] = summaryField.Type.Text; // type of field
                                         keyMap["value"] = summaryField.ValueDetection.Text; // value of field
-                                        keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
+                                        // keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
                                         return keyMap;
                                     });
                                     return map;
