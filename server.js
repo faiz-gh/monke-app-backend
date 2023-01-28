@@ -78,18 +78,16 @@ const uploadAndAnalyse = async (req, res) => {
                             } else {
                                 // const jdata = JSON.parse(data);
                                 var summaryFields = [];
-                                var summaryField = jdata.ExpenseDocuments.forEach((expenseDocument) => {
-                                    var map = expenseDocument.SummaryFields.forEach((summaryField) => {
+                                jdata.ExpenseDocuments.forEach((expenseDocument) => {
+                                    expenseDocument.SummaryFields.forEach((summaryField) => {
                                         var keyMap = {};
                                         keyMap["type"] = summaryField.Type.Text; // type of field
                                         keyMap["value"] = summaryField.ValueDetection.Text; // value of field
                                         // keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
-                                        return keyMap;
+                                        summaryFields.push(keyMap);
                                     });
-                                    return map;
                                 });
 
-                                summaryFields.push(summaryField);
                                 console.log(JSON.stringify(summaryFields));
                                 res.status(200).json(summaryFields); // send result to client
                             }
