@@ -90,8 +90,8 @@ const uploadAndAnalyse = async (req, res) => {
                                 });
 
                                 summaryFields.push(summaryField);
-                                console.log(summaryFields);
-                                res.status(200).json(data); // send result to client
+                                console.log(JSON.stringify(summaryFields));
+                                res.status(200).json(summaryFields); // send result to client
                             }
                         }); // analyse expense
                     }
