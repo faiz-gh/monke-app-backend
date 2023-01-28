@@ -78,13 +78,13 @@ const uploadAndAnalyse = async (req, res) => {
                             } else {
                                 // const jdata = JSON.parse(data);
                                 var summaryFields = [];
-                                var expenseDocument = jdata.ExpenseDocuments[0];
-                                var summaryField = expenseDocument.SummaryFields.forEach((summaryField) => {
-                                    var keyMap = {};
-                                    keyMap["type"] = summaryField.Type.Text; // type of field
-                                    keyMap["value"] = summaryField.ValueDetection.Text; // value of field
-                                    keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
-                                    return keyMap;
+                                var summaryField = jdata.ExpenseDocuments.forEach((expenseDocument) => {
+                                    expenseDocument.SummaryFields.forEach((summaryField) => {
+                                        var keyMap = {};
+                                        keyMap["type"] = summaryField.Type.Text; // type of field
+                                        keyMap["value"] = summaryField.ValueDetection.Text; // value of field
+                                        keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
+                                    });
                                 });
 
                                 summaryFields.push(summaryField);
