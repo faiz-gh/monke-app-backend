@@ -78,7 +78,7 @@ const uploadAndAnalyse = async (req, res) => {
                             } else {
                                 const jdata = JSON.parse(data);
                                 var summaryFields = [];
-                                var summaryField = jdata.ExpenseDocuments.SummaryFields.forEach((summaryField) => {
+                                var summaryField = jdata.ExpenseDocuments[0].SummaryFields.forEach((summaryField) => {
                                     var keyMap = {};
                                     keyMap["type"] = summaryField.Type.Text; // type of field
                                     keyMap["value"] = summaryField.ValueDetection.Text; // value of field
