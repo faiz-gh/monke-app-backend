@@ -86,16 +86,16 @@ const uploadAndAnalyse = async (req, res) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
                                             keyMap["type"] = summaryField.Type.Text; // type of field
                                             keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
-                                            typeCount++; // increment type count
                                             if (typeCount == 0){
                                                 summaryFields.push(keyMap); // push field to array
+                                                typeCount++; // increment type count
                                             }
                                         } else if (summaryField.Type.Text == "TOTAL"){
                                             keyMap["type"] = summaryField.Type.Text; // type of field
                                             keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
-                                            valueCount++; // increment value count
                                             if (valueCount == 0){
                                                 summaryFields.push(keyMap); // push field to array
+                                                valueCount++; // increment value count
                                             }
                                         }
                                     }); // summary fields
