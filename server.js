@@ -77,18 +77,39 @@ const uploadAndAnalyse = async (req, res) => {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
                                 // const jdata = JSON.parse(data);
-                                var summaryFields = [];
+                                var summaryFields = []; // array of summary fields
+                                var lineItems = []; // array of line items
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         var keyMap = {};
                                         keyMap["type"] = summaryField.Type.Text; // type of field
                                         keyMap["value"] = summaryField.ValueDetection.Text; // value of field
-                                        // keyMap["group"] = summaryField.GroupProperties[0].Types || ""; // group of field
                                         summaryFields.push(keyMap);
-                                    });
+                                    }); // summary fields
+                                    // Important Note: VENDOR_NAME and TOTAL are the needed fields
+                                    expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
+                                        lineItemGroup.LineItems.forEach((lineItem) => {
+                                            lineItem.LineItemExpenseFields.forEach((lineItemExpenseField) => {
+                                                var lineItemMap = {};
+                                                lineItemExpenseField.forEach((lineItemExpense) => {
+                                                    if (lineItemExpense.Type.Text == "ITEM") {
+                                                        lineItemMap["item"] = lineItemExpense.ValueDetection.Text;
+                                                    } else if (lineItemExpense.Type.Text == "QUANTITY") {
+                                                        lineItemMap["quantity"] = lineItemExpense.ValueDetection.Text;
+                                                    } else if (lineItemExpense.Type.Text == "PRICE") {
+                                                        lineItemMap["price"] = lineItemExpense.ValueDetection.Text;
+                                                    }
+                                                }); // line item expense
+                                                lineItems.push(lineItemMap); // push line item to array
+                                            }); // line item expense fields
+                                        }); // line items
+                                    }); // line item groups
+
+                                    // Important Note: Every Line Item has Name, Quantity and Price as keys
                                 });
 
                                 console.log(JSON.stringify(summaryFields));
+                                console.log(JSON.stringify(lineItems));
                                 res.status(200).json(summaryFields); // send result to client
                             }
                         }); // analyse expense
