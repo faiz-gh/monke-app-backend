@@ -83,7 +83,7 @@ const uploadAndAnalyse = async (req, res) => {
                                         var keyMap = {}; // map of field
                                         if (summaryField.Type.Text == "VENDOR_NAME" || summaryField.Type.Text == "TOTAL"){
                                             keyMap["type"] = summaryField.Type.Text; // type of field
-                                            keyMap["value"] = summaryField.ValueDetection.Text; // value of field
+                                            keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             summaryFields.push(keyMap); // push field to array
                                         }
                                     }); // summary fields
