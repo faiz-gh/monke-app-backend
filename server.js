@@ -82,26 +82,24 @@ const uploadAndAnalyse = async (req, res) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                var summaryFields = []; // array of summary fields
+                                var summaryFields = {}; // array of summary fields
                                 var lineItems = []; // array of line items
                                 var typeCount = 0; // count of types
                                 var valueCount = 0; // count of values
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
-                                    var keyMap = {}; // map of field
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            keyMap["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (typeCount == 0){
                                                 typeCount++; // increment type count
                                             }
                                         } else if (summaryField.Type.Text == "TOTAL"){
-                                            keyMap["total"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            summaryFields["total"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (valueCount == 0){
                                                 valueCount++; // increment value count
                                             }
                                         }
                                     }); // summary fields
-                                    summaryFields.push(keyMap); // push field to array
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
