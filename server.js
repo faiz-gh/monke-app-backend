@@ -49,7 +49,8 @@ const textract = new AWS.Textract({
 
 const uploadAndAnalyse = async (req, res) => {
     try {
-        const fileName = `${uuid.v4()}.jpg`; // generate unique file name
+        const uuidGenerator = uuid.v4(); // generate unique file name
+        const fileName = `${uuidGenerator}.jpg`; // generate unique file name
         const image = Buffer.from(req.body.photo, 'base64'); // convert base64 to buffer
         const s3Params = {
             Bucket: process.env.S3_BUCKET_NAME, // bucket name
@@ -123,10 +124,15 @@ const uploadAndAnalyse = async (req, res) => {
 
                                 console.log(JSON.stringify(summaryFields));
                                 console.log(JSON.stringify(lineItems));
-                                // db.collection('bills').add({
-                                //     vendor_name: summaryFields,
-                                //     items: lineItems,
-                                // }); // add to firestore
+                                db.collection('bills').doc(uuidGenerator).set({
+                                    vendor_name: summaryFields.vendor_name,
+                                    items: lineItems,
+                                    total: summaryFields.total,
+                                }).then((docRef) => {
+                                    console.log("Document written with ID: ", docRef.id); // log success
+                                }).catch((error) => {
+                                    console.error("Error adding document: ", error); // log error
+                                }); // add to firestore
                                 res.status(200).json(summaryFields); // send result to client
                             }
                         }); // analyse expense
