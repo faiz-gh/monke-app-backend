@@ -1,13 +1,19 @@
 const express = require('express'); // Express web server framework
-const fs = require('fs'); // file system
 const AWS = require('aws-sdk'); // AWS SDK
 const admin = require('firebase-admin'); // Firebase Admin SDK
+const serviceAccount = require('./monke-app-firebase-adminsdk-chm3j-442c650267.json'); // service account key
 const BodyParser = require('body-parser'); // for parsing JSON
 const uuid = require('uuid'); // for generating unique file names
 const dotenv = require('dotenv'); // for loading environment variables
 
-const app = express(); // create express app
+// configure Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount), // service account key
+}); // initialize Firebase Admin SDK
+const db = admin.firestore(); // get Firestore instance
 
+
+const app = express(); // create express app
 // configure express app
 app.use(BodyParser.json({
     limit: '50mb',
@@ -81,24 +87,21 @@ const uploadAndAnalyse = async (req, res) => {
                                 var typeCount = 0; // count of types
                                 var valueCount = 0; // count of values
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
+                                    var keyMap = {}; // map of field
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
-                                        var keyMap = {}; // map of field
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            keyMap["type"] = summaryField.Type.Text; // type of field
-                                            keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            keyMap["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (typeCount == 0){
-                                                summaryFields.push(keyMap); // push field to array
                                                 typeCount++; // increment type count
                                             }
                                         } else if (summaryField.Type.Text == "TOTAL"){
-                                            keyMap["type"] = summaryField.Type.Text; // type of field
-                                            keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            keyMap["total"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (valueCount == 0){
-                                                summaryFields.push(keyMap); // push field to array
                                                 valueCount++; // increment value count
                                             }
                                         }
                                     }); // summary fields
+                                    summaryFields.push(keyMap); // push field to array
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
@@ -122,6 +125,10 @@ const uploadAndAnalyse = async (req, res) => {
 
                                 console.log(JSON.stringify(summaryFields));
                                 console.log(JSON.stringify(lineItems));
+                                // db.collection('bills').add({
+                                //     vendor_name: summaryFields,
+                                //     items: lineItems,
+                                // }); // add to firestore
                                 res.status(200).json(summaryFields); // send result to client
                             }
                         }); // analyse expense
