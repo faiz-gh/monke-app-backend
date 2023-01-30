@@ -87,21 +87,20 @@ const uploadAndAnalyse = async (req, res) => {
                                         summaryFields.push(keyMap);
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
+                                    
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
                                         lineItemGroup.LineItems.forEach((lineItem) => {
+                                            var lineItemMap = {}; // map of line item
                                             lineItem.LineItemExpenseFields.forEach((lineItemExpenseField) => {
-                                                var lineItemMap = {};
-                                                lineItemExpenseField.forEach((lineItemExpense) => {
-                                                    if (lineItemExpense.Type.Text == "ITEM") {
-                                                        lineItemMap["item"] = lineItemExpense.ValueDetection.Text;
-                                                    } else if (lineItemExpense.Type.Text == "QUANTITY") {
-                                                        lineItemMap["quantity"] = lineItemExpense.ValueDetection.Text;
-                                                    } else if (lineItemExpense.Type.Text == "PRICE") {
-                                                        lineItemMap["price"] = lineItemExpense.ValueDetection.Text;
-                                                    }
-                                                }); // line item expense
-                                                lineItems.push(lineItemMap); // push line item to array
+                                                if (lineItemExpenseField.Type.Text == "ITEM") {
+                                                    lineItemMap["item"] = lineItemExpenseField.ValueDetection.Text; // name of item
+                                                } else if (lineItemExpenseField.Type.Text == "QUANTITY") {
+                                                    lineItemMap["quantity"] = lineItemExpenseField.ValueDetection.Text; // quantity of item
+                                                } else if (lineItemExpenseField.Type.Text == "PRICE") {
+                                                    lineItemMap["price"] = lineItemExpenseField.ValueDetection.Text; // price of item
+                                                }
                                             }); // line item expense fields
+                                            lineItems.push(lineItemMap); // push line item to array
                                         }); // line items
                                     }); // line item groups
 
