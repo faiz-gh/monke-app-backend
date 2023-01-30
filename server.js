@@ -78,13 +78,25 @@ const uploadAndAnalyse = async (req, res) => {
                             } else {
                                 var summaryFields = []; // array of summary fields
                                 var lineItems = []; // array of line items
+                                var typeCount = 0; // count of types
+                                var valueCount = 0; // count of values
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         var keyMap = {}; // map of field
-                                        if (summaryField.Type.Text == "VENDOR_NAME" || summaryField.Type.Text == "TOTAL"){
+                                        if (summaryField.Type.Text == "VENDOR_NAME"){
                                             keyMap["type"] = summaryField.Type.Text; // type of field
                                             keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
-                                            summaryFields.push(keyMap); // push field to array
+                                            typeCount++; // increment type count
+                                            if (typeCount == 0){
+                                                summaryFields.push(keyMap); // push field to array
+                                            }
+                                        } else if (summaryField.Type.Text == "TOTAL"){
+                                            keyMap["type"] = summaryField.Type.Text; // type of field
+                                            keyMap["value"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            valueCount++; // increment value count
+                                            if (valueCount == 0){
+                                                summaryFields.push(keyMap); // push field to array
+                                            }
                                         }
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
@@ -94,7 +106,7 @@ const uploadAndAnalyse = async (req, res) => {
                                             var lineItemMap = {}; // map of line item
                                             lineItem.LineItemExpenseFields.forEach((lineItemExpenseField) => {
                                                 if (lineItemExpenseField.Type.Text == "ITEM") {
-                                                    lineItemMap["item"] = lineItemExpenseField.ValueDetection.Text; // name of item
+                                                    lineItemMap["item"] = lineItemExpenseField.ValueDetection.Text.replace(/\n/g, ' '); // name of item
                                                 } else if (lineItemExpenseField.Type.Text == "PRICE") {
                                                     lineItemMap["price"] = lineItemExpenseField.ValueDetection.Text; // price of item
                                                 } else if (lineItemExpenseField.Type.Text == "QUANTITY") {
