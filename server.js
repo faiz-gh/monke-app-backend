@@ -76,15 +76,16 @@ const uploadAndAnalyse = async (req, res) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                // const jdata = JSON.parse(data);
                                 var summaryFields = []; // array of summary fields
                                 var lineItems = []; // array of line items
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
-                                        var keyMap = {};
-                                        keyMap["type"] = summaryField.Type.Text; // type of field
-                                        keyMap["value"] = summaryField.ValueDetection.Text; // value of field
-                                        summaryFields.push(keyMap);
+                                        var keyMap = {}; // map of field
+                                        if (summaryField.Type.Text == "VENDOR_NAME" || summaryField.Type.Text == "TOTAL"){
+                                            keyMap["type"] = summaryField.Type.Text; // type of field
+                                            keyMap["value"] = summaryField.ValueDetection.Text; // value of field
+                                            summaryFields.push(keyMap); // push field to array
+                                        }
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
                                     
@@ -103,7 +104,6 @@ const uploadAndAnalyse = async (req, res) => {
                                             lineItems.push(lineItemMap); // push line item to array
                                         }); // line items
                                     }); // line item groups
-
                                     // Important Note: Every Line Item has Name, Quantity and Price as keys
                                 });
 
