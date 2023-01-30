@@ -94,10 +94,10 @@ const uploadAndAnalyse = async (req, res) => {
                                             lineItem.LineItemExpenseFields.forEach((lineItemExpenseField) => {
                                                 if (lineItemExpenseField.Type.Text == "ITEM") {
                                                     lineItemMap["item"] = lineItemExpenseField.ValueDetection.Text; // name of item
-                                                } else if (lineItemExpenseField.Type.Text == "QUANTITY") {
-                                                    lineItemMap["quantity"] = lineItemExpenseField.ValueDetection.Text; // quantity of item
                                                 } else if (lineItemExpenseField.Type.Text == "PRICE") {
                                                     lineItemMap["price"] = lineItemExpenseField.ValueDetection.Text; // price of item
+                                                } else if (lineItemExpenseField.Type.Text == "QUANTITY") {
+                                                    lineItemMap["quantity"] = lineItemExpenseField.ValueDetection.Text; // quantity of item
                                                 }
                                             }); // line item expense fields
                                             lineItems.push(lineItemMap); // push line item to array
