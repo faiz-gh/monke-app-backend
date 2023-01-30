@@ -117,7 +117,8 @@ const uploadAndAnalyse = async (req, res) => {
                                         }); // line items
                                     }); // line item groups
                                     // Important Note: Every Line Item has Name, Quantity and Price as keys
-                                });
+                                    
+                                }); // expense documents
 
                                 console.log(JSON.stringify(summaryFields));
                                 console.log(JSON.stringify(lineItems));
