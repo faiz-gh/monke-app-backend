@@ -90,7 +90,7 @@ const uploadAndAnalyse = async (req, res) => {
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' ') || "Not Found!"; // value of field
                                             if (typeCount == 0){
                                                 typeCount++; // increment type count
                                             }
@@ -124,17 +124,22 @@ const uploadAndAnalyse = async (req, res) => {
 
                                 console.log(JSON.stringify(summaryFields));
                                 console.log(JSON.stringify(lineItems));
-                                db.collection('bills').doc(uuidGenerator).set({
-                                    vendor_name: summaryFields.vendor_name,
-                                    items: lineItems,
-                                    total: summaryFields.total,
-                                    date: new Date().toISOString(),
-                                }).then((docRef) => {
-                                    console.log("Document written with ID: ", docRef.id); // log success
-                                }).catch((error) => {
-                                    console.error("Error adding document: ", error); // log error
-                                }); // add to firestore
-                                res.status(200).json(summaryFields); // send result to client
+                                try {
+                                    db.collection('bills').doc(uuidGenerator).set({
+                                        vendor_name: summaryFields.vendor_name,
+                                        items: lineItems,
+                                        total: summaryFields.total,
+                                        date: new Date().toISOString(),
+                                    }).then((docRef) => {
+                                        console.log("Document written with ID: ", docRef.id); // log success
+                                    }).catch((error) => {
+                                        console.error("Error adding document: ", error); // log error
+                                    });
+                                } catch (err){
+                                    throw("Error uploading to the firestore: " , err);
+                                }
+                                 // add to firestore
+                                res.status(200).send("Success"); // send success
                             }
                         }); // analyse expense
                     }
