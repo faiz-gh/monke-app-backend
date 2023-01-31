@@ -139,7 +139,7 @@ const uploadAndAnalyse = async (req, res) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
 
-                                    const increment = admin.firestore.FieldValue.increment(parseInt(summaryFields.total));
+                                    const increment = firebase.firestore.FieldValue.increment(parseInt(summaryFields.total));
                                     db.collection('data').doc('stats').update({
                                         count: increment,
                                     }).then((docRef) => {
