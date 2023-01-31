@@ -83,7 +83,7 @@ const uploadAndAnalyse = async (req, res) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                var summaryFields = {"vendor_name": "N/A", "total": "0"}; // array of summary fields
+                                var summaryFields = {"vendor_name": "N/A", "total": 0}; // array of summary fields
                                 var lineItems = []; // array of line items
                                 var typeCount = 0; // count of types
                                 var valueCount = 0; // count of values
@@ -127,16 +127,27 @@ const uploadAndAnalyse = async (req, res) => {
                                 console.log(JSON.stringify(summaryFields));
                                 console.log(JSON.stringify(lineItems));
                                 try {
+
                                     db.collection('bills').doc(uuidGenerator).set({
                                         vendor_name: summaryFields.vendor_name,
                                         items: lineItems,
                                         total: summaryFields.total,
                                         date: new Date().toISOString(),
                                     }).then((docRef) => {
+                                        console.log("Document written with ID: ", fileName); // log success
+                                    }).catch((error) => {
+                                        console.error("Error adding document: ", error); // log error
+                                    }); // add bill to database
+
+                                    const increment = admin.firestore.FieldValue.increment(parseInt(summaryFields.total));
+                                    db.collection('data').doc('stats').update({
+                                        total: increment,
+                                    }).then((docRef) => {
                                         console.log("Document written with ID: ", docRef.id); // log success
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
-                                    });
+                                    }); // update total
+
                                 } catch (err){
                                     throw("Error uploading to the firestore: " , err);
                                 }
