@@ -83,15 +83,14 @@ const uploadAndAnalyse = async (req, res) => {
                             if (err) {
                                 console.error("Error analysing expense: ", err); // log error
                             } else {
-                                var summaryFields = {}; // array of summary fields
+                                var summaryFields = {"vendor_name": "N/A", "total": "0"}; // array of summary fields
                                 var lineItems = []; // array of line items
                                 var typeCount = 0; // count of types
                                 var valueCount = 0; // count of values
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' ') || "Not Available"; // value of field
-                                            console.log(summaryField.vendor_name);
+                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (typeCount == 0){
                                                 typeCount++; // increment type count
                                             }
@@ -104,9 +103,7 @@ const uploadAndAnalyse = async (req, res) => {
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
 
-                                    // if (summaryFields["vendor_name"] == undefined){
-                                    //     summaryFields["vendor_name"] == "Not Found!"; // if vendor name is not found
-                                    // }
+                                    console.log(summaryFields.vendor_name);
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
                                         lineItemGroup.LineItems.forEach((lineItem) => {
