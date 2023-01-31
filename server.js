@@ -90,7 +90,7 @@ const uploadAndAnalyse = async (req, res) => {
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' ') || "Not Found!"; // value of field
+                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
                                             if (typeCount == 0){
                                                 typeCount++; // increment type count
                                             }
@@ -102,6 +102,10 @@ const uploadAndAnalyse = async (req, res) => {
                                         }
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
+
+                                    if (summaryFields["vendor_name"] == null){
+                                        summaryFields["vendor_name"] == "Not Found!"; // if vendor name is not found
+                                    }
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
                                         lineItemGroup.LineItems.forEach((lineItem) => {
