@@ -1,7 +1,6 @@
 const express = require('express'); // Express web server framework
 const AWS = require('aws-sdk'); // AWS SDK
 const admin = require('firebase-admin'); // Firebase Admin SDK
-const firebase = require('firebase'); // Firebase SDK
 const serviceAccount = require('./monke-app-firebase-adminsdk-chm3j-442c650267.json'); // service account key
 const BodyParser = require('body-parser'); // for parsing JSON
 const uuid = require('uuid'); // for generating unique file names
@@ -139,7 +138,7 @@ const uploadAndAnalyse = async (req, res) => {
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
-                                    
+
                                     db.collection('data').doc('stats').update({
                                         count: FieldValue.increment(parseInt(summaryFields.total)),
                                     }).then((docRef) => {
