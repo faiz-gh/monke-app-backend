@@ -138,9 +138,10 @@ const uploadAndAnalyse = async (req, res) => {
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
-	                            
+                                    
+                                    const discount = parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0]) * 0.1; // calculate discount
                                     db.collection('data').doc('stats').update({
-					count: admin.firestore.FieldValue.increment(parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0])),
+					count: admin.firestore.FieldValue.increment(discount),
                                     }).then((docRef) => {
                                         console.log("Document written with ID: ", docRef.id); // log success
                                     }).catch((error) => {
