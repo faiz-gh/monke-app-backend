@@ -11,7 +11,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount), // service account key
 }); // initialize Firebase Admin SDK
 const db = admin.firestore(); // get Firestore instance
-
+admin.firestore().settings({ignoreUndefinedProperties:true}); // ignore undefined properties
 
 const app = express(); // create express app
 // configure express app
@@ -103,9 +103,9 @@ const uploadAndAnalyse = async (req, res) => {
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
 
-                                    if (summaryFields["vendor_name"] == undefined){
-                                        summaryFields["vendor_name"] == "Not Found!"; // if vendor name is not found
-                                    }
+                                    // if (summaryFields["vendor_name"] == undefined){
+                                    //     summaryFields["vendor_name"] == "Not Found!"; // if vendor name is not found
+                                    // }
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
                                         lineItemGroup.LineItems.forEach((lineItem) => {
