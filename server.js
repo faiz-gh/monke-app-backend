@@ -138,9 +138,9 @@ const uploadAndAnalyse = async (req, res) => {
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
-
+	                            
                                     db.collection('data').doc('stats').update({
-                                        count: admin.firestore.FieldValue.increment(parseInt(summaryFields.total)),
+					count: admin.firestore.FieldValue.increment(parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0])),
                                     }).then((docRef) => {
                                         console.log("Document written with ID: ", docRef.id); // log success
                                     }).catch((error) => {
