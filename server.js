@@ -90,7 +90,8 @@ const uploadAndAnalyse = async (req, res) => {
                                 jdata.ExpenseDocuments.forEach((expenseDocument) => {
                                     expenseDocument.SummaryFields.forEach((summaryField) => {
                                         if (summaryField.Type.Text == "VENDOR_NAME"){
-                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' '); // value of field
+                                            summaryFields["vendor_name"] = summaryField.ValueDetection.Text.replace(/\n/g, ' ') || "Not Available"; // value of field
+                                            console.log(summaryField.vendor_name);
                                             if (typeCount == 0){
                                                 typeCount++; // increment type count
                                             }
