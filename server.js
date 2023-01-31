@@ -128,6 +128,7 @@ const uploadAndAnalyse = async (req, res) => {
                                     vendor_name: summaryFields.vendor_name,
                                     items: lineItems,
                                     total: summaryFields.total,
+                                    date: new Date().toISOString(),
                                 }).then((docRef) => {
                                     console.log("Document written with ID: ", docRef.id); // log success
                                 }).catch((error) => {
