@@ -103,7 +103,7 @@ const uploadAndAnalyse = async (req, res) => {
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
 
-                                    if (summaryFields["vendor_name"] == null){
+                                    if (summaryFields["vendor_name"] == undefined){
                                         summaryFields["vendor_name"] == "Not Found!"; // if vendor name is not found
                                     }
                                     
