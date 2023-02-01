@@ -120,8 +120,7 @@ const uploadAndAnalyse = async (req, res) => {
                                             lineItems.push(lineItemMap); // push line item to array
                                         }); // line items
                                     }); // line item groups
-                                    // Important Note: Every Line Item has Name, Quantity and Price as keys
-                                    
+                                    // Important Note: Every Line Item has Name, Quantity and Price as keys 
                                 }); // expense documents
 
                                 console.log(JSON.stringify(summaryFields));
@@ -138,9 +137,12 @@ const uploadAndAnalyse = async (req, res) => {
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
-                                    
-                                    const discount = parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0]) * 0.1; // calculate discount
-                                    db.collection('data').doc('stats').update({
+
+                                    // filtering discount value
+                                    const number = parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0]) * 0.1; // calculate discount
+                                    const discount = Math.round((number + Number.EPSILON) * 100) / 100; // rounding off to 2 decimal points
+
+				    db.collection('data').doc('stats').update({
 					count: admin.firestore.FieldValue.increment(discount),
                                     }).then((docRef) => {
                                         console.log("Document written with ID: ", docRef.id); // log success
