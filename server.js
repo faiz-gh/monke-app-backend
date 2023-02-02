@@ -1,7 +1,7 @@
 const express = require('express'); // Express web server framework
 const AWS = require('aws-sdk'); // AWS SDK
 const admin = require('firebase-admin'); // Firebase Admin SDK
-const serviceAccount = require('./monke-app-firebase-adminsdk-chm3j-442c650267.json'); // service account key
+const serviceAccount = require('./serviceAccount.json'); // service account key
 const BodyParser = require('body-parser'); // for parsing JSON
 const uuid = require('uuid'); // for generating unique file names
 const dotenv = require('dotenv'); // for loading environment variables
@@ -102,8 +102,6 @@ const uploadAndAnalyse = async (req, res) => {
                                         }
                                     }); // summary fields
                                     // Important Note: VENDOR_NAME and TOTAL are the needed fields
-
-                                    console.log(summaryFields.vendor_name);
                                     
                                     expenseDocument.LineItemGroups.forEach((lineItemGroup) => {
                                         lineItemGroup.LineItems.forEach((lineItem) => {
@@ -123,8 +121,9 @@ const uploadAndAnalyse = async (req, res) => {
                                     // Important Note: Every Line Item has Name, Quantity and Price as keys 
                                 }); // expense documents
 
-                                console.log(JSON.stringify(summaryFields));
-                                console.log(JSON.stringify(lineItems));
+                                console.log(JSON.stringify(summaryFields)); // log summary fields
+                                console.log(JSON.stringify(lineItems)); // log line items
+
                                 try {
 
                                     db.collection('bills').doc(uuidGenerator).set({
@@ -142,8 +141,8 @@ const uploadAndAnalyse = async (req, res) => {
                                     const number = parseFloat(summaryFields.total.match(/[+-]?\d+(\.\d+)?/g)[0]) * 0.1; // calculate discount
                                     const discount = Math.round((number + Number.EPSILON) * 100) / 100; // rounding off to 2 decimal points
 
-				    db.collection('data').doc('stats').update({
-					count: admin.firestore.FieldValue.increment(discount),
+				                    db.collection('data').doc('stats').update({
+					                    count: admin.firestore.FieldValue.increment(discount), // increment discount
                                     }).then((docRef) => {
                                         console.log("Document written with ID: ", docRef.id); // log success
                                     }).catch((error) => {
