@@ -125,7 +125,8 @@ const uploadAndAnalyse = async (req, res) => {
                                 console.log(JSON.stringify(lineItems)); // log line items
 
                                 try {
-                                    var docname = summaryFields.vendor_name + " - " + new Date().toISOString(); // generate unique document name
+                                    var currentDate = new Date().toISOString(); // current date
+                                    var docname = summaryFields.vendor_name + " - " + currentDate; // generate unique document name
                                     db.collection('bills').doc(docname).set({
                                         vendor_name: summaryFields.vendor_name,
                                         items: lineItems,
