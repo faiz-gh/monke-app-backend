@@ -125,8 +125,8 @@ const uploadAndAnalyse = async (req, res) => {
                                 console.log(JSON.stringify(lineItems)); // log line items
 
                                 try {
-
-                                    db.collection('bills').doc(uuidGenerator).set({
+                                    var docname = summaryFields.vendor_name + " - " + new Date().toISOString(); // generate unique document name
+                                    db.collection('bills').doc(docname).set({
                                         vendor_name: summaryFields.vendor_name,
                                         items: lineItems,
                                         total: summaryFields.total,
