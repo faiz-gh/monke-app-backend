@@ -133,7 +133,7 @@ const uploadAndAnalyse = async (req, res) => {
                                         total: summaryFields.total,
                                         date: new Date().toISOString(),
                                     }).then((docRef) => {
-                                        console.log("Document written with ID: ", fileName); // log success
+                                        console.log("Document written with ID: ", docname); // log success
                                     }).catch((error) => {
                                         console.error("Error adding document: ", error); // log error
                                     }); // add bill to database
