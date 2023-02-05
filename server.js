@@ -126,7 +126,7 @@ const uploadAndAnalyse = async (req, res) => {
 
                                 try {
                                     var currentDate = new Date().toISOString(); // current date
-                                    var docname = summaryFields.vendor_name + " - " + currentDate; // generate unique document name
+                                    var docname = summaryFields.vendor_name + "-" + currentDate; // generate unique document name
                                     db.collection('bills').doc(docname).set({
                                         vendor_name: summaryFields.vendor_name,
                                         items: lineItems,
